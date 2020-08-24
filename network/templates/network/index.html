@@ -1,0 +1,57 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <hr>
+
+    <div id="feed-view">
+    <div id="title-view">
+    </div>
+    <form id="compose-form">
+            <textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
+            <div id="compose-view">
+            </div>
+            <input type="hidden" id="send" class="btn btn-primary"/>
+            <button class="btn btn-sm btn-outline-primary" id="post">Post </button>
+        </form>
+        {% for tweet in tweets %}
+        <div class="tweet" id={{tweet.poster.username}} >
+        <h3 id={{tweet.poster.username}}> <a class="nav-link" id="user" href="{% url 'feed' feed=tweet.poster.username %}"> {{tweet.poster.username}} </a></h3>
+        <p> {{tweet.body}} </p>
+        <h4> {{tweet.timestamp}} </h4>
+        {% if request.user == tweet.poster %}
+        <li class="nav-item">
+                        <button class="btn btn-sm btn-outline-primary" id="Edit">Edit</button>
+                    </li>
+        {% endif %}
+        </div>
+        {% endfor %}
+        {% if tweets.has_other_pages %}
+  <ul class="pagination">
+    {% if tweets.has_previous %}
+      <li><a href="?page={{ users.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in tweets.paginator.page_range %}
+      {% if users.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if tweets.has_next %}
+      <li><a href="?page={{ users.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
+    </div>
+    
+    
+{% endblock %}
+
+{% block script %}
+   <<script src="{% static 'network/feed4.js' %}"></script> 
+{% endblock %}

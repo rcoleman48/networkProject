@@ -1,0 +1,71 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <hr>
+    <div id="post-view">
+    <h1> Post New Status </h1>
+    <form id="compose-form">
+            <textarea class="form-control" id="compose-body" placeholder="New Status"></textarea>
+            <div id="compose-view">
+            </div>
+            <input type="hidden" id="send" class="btn btn-primary"/>
+            <button class="btn btn-sm btn-outline-primary" id="post">Post </button>
+        </form>
+        </div>
+    <div id="feed-view">
+    <div id="title-view">
+    <h1> All Posts </h1>
+    </div>    
+        {% for tweet in tweets %}
+        <div class="tweet" id="tweet{{tweet.id}}" data={{tweet.poster.username}}>
+        <h3 id={{tweet.poster.username}}> <a class="nav-link" id="user" href="{% url 'feed' feed=tweet.poster.username %}"> {{tweet.poster.username}} </a></h3>
+        <p> {{tweet.body}} </p>
+        <h4> {{tweet.timestamp}} </h4>
+         <div id="like{{tweet.id}}" class="like" data={{tweet.id}} > </div>
+        </div>
+        {% if request.user == tweet.poster %}
+        <div class="edit" id ="edit{{tweet.id}}" >
+        <form id="edit-form" data={{tweet.id}}>
+            <textarea class="form-control" id="edit-body{{tweet.id}}">{{tweet.body}}</textarea>
+            <div id="compose-view">
+            </div>
+            <input type="hidden" id="send" class="btn btn-primary"/>
+            <button class="btn btn-sm btn-outline-primary" id="postEdit">Post </button>
+        </form>
+         </div>
+        <li class="nav-item" id={{tweet.id}}>
+                        <button class="btn btn-sm btn-outline-primary" id="edit">Edit</button>
+                    </li>
+        {% endif %}
+        {% endfor %}
+        {% if tweets.has_other_pages %}
+  <ul class="pagination">
+    {% if tweets.has_previous %}
+      <li><a href="?page={{ users.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in tweets.paginator.page_range %}
+      {% if users.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if tweets.has_next %}
+      <li><a href="?page={{ users.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
+    </div>
+    
+    
+{% endblock %}
+
+{% block script %}
+   <script src="{% static 'network/feedAll.js' %}">
+   </script> 
+{% endblock %}
